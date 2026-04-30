@@ -1085,17 +1085,18 @@ function handleFile(file) {
         '': '',
       };
 
-      const gs = (col) => {
-        if (col < 0) return '';
-        const v = String(masterRows[i][col] ?? '').trim().toLowerCase();
-        return SMAP[v] !== undefined ? SMAP[v] : String(masterRows[i][col] ?? '').trim().slice(0, 1).toUpperCase();
-      };
-
       const newData = [];
       for (let i = mHdrIdx + 1; i < masterRows.length; i++) {
         const row  = masterRows[i];
         const code = String(row[mc.code] ?? '').trim();
         if (!code || isNaN(Number(code))) continue;
+
+        // gs must be inside loop so it closes over current row
+        const gs = (col) => {
+          if (col < 0) return '';
+          const v = String(row[col] ?? '').trim().toLowerCase();
+          return SMAP[v] !== undefined ? SMAP[v] : String(row[col] ?? '').trim().slice(0, 1).toUpperCase();
+        };
 
         const info      = edb[code] || {};
         const empStatus = (info.status || '').toLowerCase();
